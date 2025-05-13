@@ -12,25 +12,35 @@ public class AIController : MonoBehaviour
     public float fieldOfViewAngle = 110f;
 
     public Transform player;
-    public LayerMask playerLayer;
+    public LayerMask playerLayer;  // Only the "Player" layer
+    public LayerMask obstacleLayer; // Only the "Environment" layer
     public string gameOverSceneName = "GameOverScene";
+
+    public AudioSource footstepAudioSource;  // AudioSource component to play footsteps
+    public AudioClip footstepClip;  // Footstep sound clip
+    public float footstepDelay = 0.5f;  // Delay between footstep sounds
+
+    private float timeSinceLastStep;  // Time tracker for footstep sounds
 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
+        timeSinceLastStep = footstepDelay;  // Start with a delay to prevent immediate sound
 
         if (player == null)
         {
             player = Camera.main.transform;
         }
 
-        Debug.Log("AIController initialized. Player: " + player.name);
+        Debug.Log("Player Layer Mask: " + playerLayer.value);
+        Debug.Log("Obstacle Layer Mask: " + obstacleLayer.value);
     }
 
     void Update()
     {
         Patrol();
         DetectPlayer();
+        PlayFootsteps();
     }
 
     void Patrol()
@@ -60,52 +70,63 @@ public class AIController : MonoBehaviour
     }
 
     void DetectPlayer()
-{
-    Vector3 directionToPlayer = player.position - transform.position;  // Direction to the player
-    float distanceToPlayer = directionToPlayer.magnitude;
-
-    //Debug.Log("Distance to player: " + distanceToPlayer);
-
-    if (distanceToPlayer <= detectionRange)  // Within detection range
     {
-        float angle = Vector3.Angle(directionToPlayer, transform.forward);  // Angle between AI's forward and direction to player
-        //Debug.Log("Angle to player: " + angle);
+        float headHeight = 1.8f;
+        float bodyHeight = 1.0f;
+        float feetHeight = 0.3f;
 
-        if (angle <= fieldOfViewAngle / 2)  // Within the AI's field of view
+        Vector3 headOrigin = new Vector3(transform.position.x, transform.position.y + headHeight, transform.position.z);
+        Vector3 bodyOrigin = new Vector3(transform.position.x, transform.position.y + bodyHeight, transform.position.z);
+        Vector3 feetOrigin = new Vector3(transform.position.x, transform.position.y + feetHeight, transform.position.z);
+
+        Vector3 forwardDirection = transform.forward;
+
+        Debug.DrawRay(headOrigin, forwardDirection * detectionRange, Color.red);
+        Debug.DrawRay(bodyOrigin, forwardDirection * detectionRange, Color.green);
+        Debug.DrawRay(feetOrigin, forwardDirection * detectionRange, Color.blue);
+
+        RaycastHit hit;
+
+        // Head Level Raycast
+        if (Physics.Raycast(headOrigin, forwardDirection, out hit, detectionRange, playerLayer))
         {
-            RaycastHit hit;
-            
-            // Raycast from the AI's position, in the AI's forward direction
-            bool hitSomething = Physics.Raycast(transform.position, transform.forward, out hit, detectionRange, playerLayer);
+            ProcessHit(headOrigin, hit);
+        }
 
-            // Visualize the ray in the Scene view (it should point in the AI's forward direction)
+        // Body Level Raycast
+        if (Physics.Raycast(bodyOrigin, forwardDirection, out hit, detectionRange, playerLayer))
+        {
+            ProcessHit(bodyOrigin, hit);
+        }
 
-            if (hitSomething)
+        // Feet Level Raycast
+        if (Physics.Raycast(feetOrigin, forwardDirection, out hit, detectionRange, playerLayer))
+        {
+            ProcessHit(feetOrigin, hit);
+        }
+    }
+
+    void ProcessHit(Vector3 origin, RaycastHit hit)
+    {
+        Debug.Log("Raycast hit: " + hit.transform.name + " | Tag: " + hit.transform.tag);
+
+        if (hit.transform.CompareTag("Player"))
+        {
+            // Check if there is an obstacle in the way
+            Vector3 directionToPlayer = (hit.point - origin).normalized;
+            float distanceToPlayer = Vector3.Distance(origin, hit.point);
+
+            if (!Physics.Raycast(origin, directionToPlayer, distanceToPlayer, obstacleLayer))
             {
-                Debug.Log("Raycast hit: " + hit.transform.name + " | Tag: " + hit.transform.tag);
-
-                if (hit.transform.CompareTag("Player"))
-                {
-                    Debug.Log("Player detected! Ending game.");
-                    EndGame();
-                }
+                Debug.Log("Player detected without obstruction. Ending game.");
+                EndGame();
             }
             else
             {
-                Debug.Log("Raycast did not hit anything.");
+                Debug.Log("Obstacle detected between AI and player.");
             }
         }
-        else
-        {
-            Debug.Log("Player is outside field of view.");
-        }
     }
-    else
-    {
-        Debug.Log("Player is outside detection range.");
-    }
-}
-
 
     void EndGame()
     {
@@ -120,4 +141,31 @@ public class AIController : MonoBehaviour
             Debug.LogError("Scene '" + gameOverSceneName + "' not found in Build Settings.");
         }
     }
+
+    public float playerDetectionRange = 20f;  // Distance at which footstep sounds will play when near the AI
+
+void PlayFootsteps()
+{
+    if (footstepClip == null)
+    {
+        Debug.LogError("Footstep clip is not assigned!");
+        return; // Exit the method early if the clip is null
+    }
+
+    // Check if the player is within the detection range
+    if (Vector3.Distance(transform.position, player.position) <= playerDetectionRange)
+    {
+        if (agent.velocity.magnitude > 0 && timeSinceLastStep >= footstepDelay)
+        {
+            // Play footstep sound if the agent is moving
+            footstepAudioSource.PlayOneShot(footstepClip);
+            timeSinceLastStep = 0;  // Reset time to track next footstep
+        }
+        else
+        {
+            timeSinceLastStep += Time.deltaTime;  // Increase time when not moving
+        }
+    }
+}
+
 }

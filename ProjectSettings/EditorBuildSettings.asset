@@ -15,11 +15,14 @@ EditorBuildSettings:
     path: Assets/Sample.unity
     guid: e63d48471f1ba436bab61a12cdb7d969
   - enabled: 1
-    path: Assets/Scenes/GameOver.unity
-    guid: 1f946bcde5abd0641b8909dad9de69d9
-  - enabled: 1
     path: Assets/Scenes/Movement.unity
     guid: 66a210df191ff49fe9f1870beb4b4a1f
+  - enabled: 1
+    path: Assets/Scenes/YouWon.unity
+    guid: 9d7e8f34ed340614c86269cf960737d4
+  - enabled: 1
+    path: Assets/Scenes/GameOver.unity
+    guid: 1f946bcde5abd0641b8909dad9de69d9
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 7d797b017701d4c9f923adcc53ffa837, type: 2}
     UnityEditor.XR.VisionOS.VisionOSSettings: {fileID: 11400000, guid: 104216a8eb13449189e8b3abe8d595d7, type: 2}

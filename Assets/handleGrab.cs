@@ -11,6 +11,7 @@ public class handleGrab : XRGrabInteractable
 
     public void EndGrab()
     {
+        rb = handler.GetComponent<Rigidbody>();
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
         transform.position = handler.transform.position;

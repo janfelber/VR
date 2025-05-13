@@ -1,0 +1,8 @@
+/Users/johnny/Documents/school/VR/VR01/VR/.utmp/RelWithDebInfo/31t6cwp4/arm64-v8a/CMakeFiles/edit_cache.dir
+/Users/johnny/Documents/school/VR/VR01/VR/.utmp/RelWithDebInfo/31t6cwp4/arm64-v8a/CMakeFiles/rebuild_cache.dir
+/Users/johnny/Documents/school/VR/VR01/VR/.utmp/RelWithDebInfo/31t6cwp4/arm64-v8a/GameActivity/CMakeFiles/game.dir
+/Users/johnny/Documents/school/VR/VR01/VR/.utmp/RelWithDebInfo/31t6cwp4/arm64-v8a/GameActivity/CMakeFiles/edit_cache.dir
+/Users/johnny/Documents/school/VR/VR01/VR/.utmp/RelWithDebInfo/31t6cwp4/arm64-v8a/GameActivity/CMakeFiles/rebuild_cache.dir
+/Users/johnny/Documents/school/VR/VR01/VR/.utmp/RelWithDebInfo/31t6cwp4/arm64-v8a/FramePacing/CMakeFiles/swappywrapper.dir
+/Users/johnny/Documents/school/VR/VR01/VR/.utmp/RelWithDebInfo/31t6cwp4/arm64-v8a/FramePacing/CMakeFiles/edit_cache.dir
+/Users/johnny/Documents/school/VR/VR01/VR/.utmp/RelWithDebInfo/31t6cwp4/arm64-v8a/FramePacing/CMakeFiles/rebuild_cache.dir
